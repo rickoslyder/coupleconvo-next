@@ -1,5 +1,5 @@
 //src/components/QuestionList/QuestionList.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { getQuestionsByCategory } from "../../pages/api";
 import { useForm } from "react-hook-form";
 import { createQuestion } from "../../pages/api";
@@ -27,20 +27,17 @@ interface Question {
 }
 
 interface QuestionListProps {
-    categoryId: string | null;
+    categoryName: string | null;
     fetchQuestions: () => void;
+    handleUpdateQuestionText: (questionId: string, questionText: string) => void;
 }
 
 const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQuestionText }) => {
     const [questions, setQuestions] = useState<Question[]>([]);
 
-    useEffect(() => {
-        fetchQuestions();
-    }, [categoryName]);
-
     const questionInputRef = useRef<HTMLInputElement>(null);
 
-    async function fetchQuestions() {
+    const fetchQuestions = useCallback(async () => {
         if (categoryName) {
             const fetchedQuestions = await getQuestionsByCategory(categoryName);
             console.log(fetchedQuestions);
@@ -48,7 +45,11 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
         } else {
             setQuestions([]);
         }
-    }
+    }, [categoryName, setQuestions]);
+
+    useEffect(() => {
+        fetchQuestions();
+    }, [categoryName, fetchQuestions]);
 
     const { register, handleSubmit, reset } = useForm<NewQuestionFormData>();
 
