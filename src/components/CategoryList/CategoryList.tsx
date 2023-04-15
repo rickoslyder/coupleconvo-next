@@ -29,6 +29,7 @@ interface CategoryListProps {
         _id: string;
         name: string;
         id: string;
+        questions: []
     }>;
     fetchCategories: () => void;
     updateQuestionText: (questionId: string, updatedText: string, categoryName: string | null) => void;
