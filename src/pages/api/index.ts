@@ -83,17 +83,16 @@ export async function generateQuestions(
   }
 }
 
-// export async function deleteCategory(categoryName: string): Promise<any[]> {
-//   try {
-//     const response = await axios.delete(`${API_URL}/categories/questions`, {
-//       categoryName,
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error deleting questions:", error);
-//     return [];
-//   }
-// }
+export async function deleteCategory(categoryName: string): Promise<any[]> {
+  // TODO: Create /categories/:categoryName endpoint
+  try {
+    const response = await axios.delete(`${API_URL}/categories/questions`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting questions:", error);
+    return [];
+  }
+}
 
 export async function deleteQuestion(questionId: string): Promise<any[]> {
   console.log("Deleting question:", questionId);
