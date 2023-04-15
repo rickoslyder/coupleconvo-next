@@ -31,7 +31,7 @@ interface CategoryListProps {
         id: string;
     }>;
     fetchCategories: () => void;
-    updateQuestionText: (questionId: string, updatedText: string) => void;
+    updateQuestionText: (questionId: string, updatedText: string, categoryName: string | null) => void;
 }
 
 const CategoryList: React.FC<CategoryListProps> = ({ categories, fetchCategories, updateQuestionText }) => {

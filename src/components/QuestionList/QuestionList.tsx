@@ -28,7 +28,7 @@ interface Question {
 
 interface QuestionListProps {
     categoryName: string | null;
-    fetchQuestions: () => void;
+    fetchQuestions?: () => void;
     handleUpdateQuestionText: (questionId: string, questionText: string) => void;
 }
 
