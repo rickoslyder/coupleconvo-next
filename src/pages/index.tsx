@@ -1,7 +1,7 @@
 // src/pages/index.tsx
 import React from 'react';
 import CategoryCard from '../components/CategoryCard/CategoryCard';
-import { MenuItem, FormControl, Select, InputLabel, SelectChangeEvent, TextField } from '@mui/material';
+import { MenuItem, FormControl, Select, InputLabel, SelectChangeEvent, TextField, Input } from '@mui/material';
 import { useState } from 'react';
 import { Container, Grid } from '@mui/material';
 import { styled } from '@mui/system';
@@ -33,6 +33,7 @@ const Index: React.FC = () => {
       const cachedCategories = loadFromLocalStorage("categories");
       try {
         if (cachedCategories) {
+          console.log("Loaded categories from local storage")
           console.log(cachedCategories)
           setCategories(cachedCategories);
           setLoadedFromCache(true);
@@ -61,6 +62,20 @@ const Index: React.FC = () => {
   const { startGame, setState, nextQuestion } = React.useContext(GameStateContext);
   const router = useRouter();
 
+  // Added player names and sameQuestion state
+  const [player1, setPlayer1] = useState("");
+  const [player2, setPlayer2] = useState("");
+  const [sameQuestion, setSameQuestion] = useState(false);
+
+  // Handle submit for player names and same/different questions setting
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    router.push({
+      pathname: "/question",
+      query: { player1, player2, sameQuestion },
+    });
+  };
+
   const [gameMode, setGameMode] = useState<"infinite" | "timed" | "unlimited" | "preset">("unlimited");
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
   const [sameOrDifferent, setSameOrDifferentState] = useState<"same" | "different">("same");
@@ -68,10 +83,12 @@ const Index: React.FC = () => {
 
   const handleCategoryClick = (category: Category) => {
     startGame(category, gameMode);
-    setState((prevState) => ({ ...prevState, gameOver: false }));
+    setState((prevState) => ({ ...prevState, gameOver: false, sameQuestion: sameOrDifferent === "same" }));
     setShowSummary(false);
-    // nextQuestion();
-    router.push('/question');
+    router.push({
+      pathname: '/question',
+      query: { player1, player2, sameQuestion: sameOrDifferent === "same" },
+    });
   };
 
   const handleGameModeChange = (event: SelectChangeEvent<"unlimited" | "timed" | "preset" | "infinite">) => {
@@ -90,8 +107,6 @@ const Index: React.FC = () => {
     setSameOrDifferentState(event.target.value as "same" | "different");
   };
 
-  console.log(categories);
-
   return (
     <RootContainer>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
@@ -99,10 +114,37 @@ const Index: React.FC = () => {
         <Typography variant="h5">The ultimate conversation starter game for couples</Typography>
       </Box>
 
+      <hr />
+
+      <FormControl fullWidth sx={{ mt: 2 }}>
+        <Typography variant="body1" sx={{ mb: 2 }}>To get started - enter your names below and select a category:</Typography>
+        <Box>
+          <TextField
+            id="player1"
+            type="text"
+            value={player1}
+            onChange={(e) => setPlayer1(e.target.value)}
+            fullWidth
+            label="Player 1 Name"
+            sx={{ mb: 2 }}
+          />
+        </Box>
+        <Box>
+          <TextField
+            id="player2"
+            type="text"
+            value={player2}
+            onChange={(e) => setPlayer2(e.target.value)}
+            fullWidth
+            label="Player 2 Name"
+          />
+        </Box>
+      </FormControl>
+      <br /><br />
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
-        <HomeIcon />
-        <PlayArrowIcon />
-        <QuizIcon />
+        <HomeIcon titleAccess="Home" />
+        <PlayArrowIcon titleAccess="Play" />
+        <QuizIcon titleAccess="Quiz" />
       </Box>
       <FormControl fullWidth>
         <InputLabel id="game-mode-label">Game Mode</InputLabel>

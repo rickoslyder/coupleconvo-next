@@ -63,7 +63,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
 
         setState((prevState) => ({
             ...prevState,
-            category,
+            currentCategory: category,
             gameMode,
             currentQuestionIndex: 0,
             questions: shuffledQuestions,

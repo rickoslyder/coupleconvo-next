@@ -27,10 +27,21 @@ const ModeIndicator = styled('div')(({ theme }) => ({
 }));
 
 const Question: React.FC = () => {
-    const { state, nextQuestion, endGame, resetGame, showGameSummary } = React.useContext(GameStateContext);
+    const { state, setState, nextQuestion, endGame, resetGame, showGameSummary } = React.useContext(GameStateContext);
     const [timeRemaining, setTimeRemaining] = React.useState<number>(10);
     const { currentQuestion, currentQuestionIndex, gameMode, sameOrDifferent, questions, numberOfQuestions } = state;
     const router = useRouter();
+
+    const { player1, player2, sameQuestion } = router.query;
+    const [currentPlayer, setCurrentPlayer] = React.useState(player1);
+
+    React.useEffect(() => {
+        if (sameQuestion === 'true') {
+            setState((prev) => ({ ...prev, sameOrDifferent: 'same' }));
+        } else {
+            setState((prev) => ({ ...prev, sameOrDifferent: 'different' }));
+        }
+    }, [sameQuestion, setState]);
 
     React.useEffect(() => {
         if (gameMode === 'timed') {
@@ -88,16 +99,35 @@ const Question: React.FC = () => {
         );
     };
 
+    const handleNextQuestion = () => {
+        if (sameQuestion !== "true") {
+            nextQuestion();
+            return;
+        }
+        if (player1 && player2) {
+            setCurrentPlayer(currentPlayer === player1 ? player2 : player1);
+        }
+        nextQuestion();
+    };
+
+    console.log(state)
+    console.log(currentQuestion)
+
     return (
         <RootContainer maxWidth="sm">
+            <Typography variant="h4" sx={{ mb: 3 }}><center>{currentPlayer}</center></Typography>
             <ProgressIndicator current={currentQuestionIndex + 1} total={numberOfQuestions} />
             <QuestionCard question={currentQuestion?.text || null} />
             <ModeIndicatorWrapper container spacing={2}>
-                <Grid item>
-                    {gameMode === 'timed' ? 'Timed Mode' : 'Unlimited Mode'}
-                </Grid>
-                <Grid item>
-                    {sameOrDifferent === 'same' ? 'Same Questions' : 'Different Questions'}
+                <Grid container item spacing={2} xs={12}>
+                    <Grid item xs={12}>
+                        <strong>{state.currentCategory?.name}</strong>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {gameMode === 'timed' ? 'Timed Mode' : 'Unlimited Mode'}
+                        <br />
+                        {sameOrDifferent === 'same' ? 'Same Questions' : 'Different Questions'}
+                    </Grid>
                 </Grid>
                 {gameMode === 'timed' && (
                     <Grid item>
@@ -106,7 +136,7 @@ const Question: React.FC = () => {
                 )}
             </ModeIndicatorWrapper>
             <Box mt={2}>
-                <Button onClick={nextQuestion} variant="contained" color="primary">Next</Button>
+                <Button onClick={handleNextQuestion} variant="contained" color="primary" sx={{ backgroundColor: '#4caf50', '&:hover': { backgroundColor: '#81c784' } }}>Next</Button>
                 {" "}
                 <Button
                     variant="contained"
@@ -116,9 +146,11 @@ const Question: React.FC = () => {
                         showGameSummary();
                         router.push("/");
                     }}
+                    sx={{ backgroundColor: '#f44336', '&:hover': { backgroundColor: '#e57373' } }}
                 >
                     End Game
                 </Button>
+
             </Box>
         </RootContainer>
     );
