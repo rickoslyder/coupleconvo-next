@@ -49,7 +49,7 @@ const Index: React.FC = () => {
       } catch (error) {
         setLoading(false);
         setError(true);
-        let updatedErrorMessages = [...errorMessages, error.message];
+        let updatedErrorMessages = [error.message];
         setErrorMessages(updatedErrorMessages);
         console.error(error);
       }
