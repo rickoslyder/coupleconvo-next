@@ -30,7 +30,7 @@ const Index: React.FC = () => {
       const cachedCategories = loadFromLocalStorage("categories");
       if (cachedCategories) {
         console.log(cachedCategories)
-        setCategories(cachedCategories.data);
+        setCategories(cachedCategories);
         setLoadedFromCache(true);
       } else {
         const fetchedCategories = await getCategories();
@@ -60,8 +60,6 @@ const Index: React.FC = () => {
     router.push('/question');
   };
 
-  // const categories = getCategories();
-
   const handleGameModeChange = (event: SelectChangeEvent<"unlimited" | "timed" | "preset" | "infinite">) => {
     setGameMode(event.target.value as "unlimited" | "timed" | "preset" | "infinite");
   };
@@ -78,7 +76,7 @@ const Index: React.FC = () => {
     setSameOrDifferentState(event.target.value as "same" | "different");
   };
 
-
+  console.log(categories);
 
   return (
     <RootContainer>
