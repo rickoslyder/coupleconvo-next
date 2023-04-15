@@ -1,0 +1,165 @@
+/* AdminPage.module.css */
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--light-color);
+  height: 100vh;
+  font-family: "Roboto", sans-serif;
+}
+
+.admin-page h1 {
+  color: var(--primary-color);
+  margin-bottom: 30px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+  background-color: var(--dark-color);
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.question-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  background-color: var(--dark-color);
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form input,
+.form textarea,
+.form button {
+  margin-bottom: 10px;
+}
+
+.form input,
+.form textarea {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid var(--primary-color);
+  outline: none;
+}
+
+.form button {
+  background-color: var(--secondary-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form button:hover {
+  background-color: var(--primary-color);
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+}
+
+.category-item h3 {
+  color: white;
+}
+
+.question-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+}
+
+.question-item p {
+  color: white;
+}
+
+.category-item button,
+.question-item button {
+  background-color: var(--secondary-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.category-item button:hover,
+.question-item button:hover {
+  background-color: var(--primary-color);
+}
+
+/* AdminPage.module.css */
+
+.fetch-button {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.fetch-button:hover {
+  background-color: var(--secondary-color);
+}
+
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--light-color);
+  height: 100vh;
+  font-family: "Roboto", sans-serif;
+}
+
+.admin-page h1 {
+  color: var(--primary-color);
+  margin-bottom: 30px;
+}
+
+.fetch-button {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.fetch-button:hover {
+  background-color: var(--secondary-color);
+}
