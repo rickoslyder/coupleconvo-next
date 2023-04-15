@@ -74,7 +74,7 @@ export async function deleteQuestion(questionId: string): Promise<void> {
   try {
     console.log("Deleting question:", questionId);
     console.log(Question);
-    const question = await Question.find({ id: questionId });
+    const question = await Question.findOne({ id: questionId });
     if (question) {
       await question.deleteOne();
     }

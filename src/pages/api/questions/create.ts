@@ -55,7 +55,7 @@ export async function deleteQuestion(questionId: string): Promise<void> {
   try {
     console.log("Deleting question:", questionId);
     console.log(Question);
-    const question = await Question.find({ id: questionId });
+    const question = await Question.findOne({ id: questionId });
     if (question) {
       await Question.deleteOne({ id: questionId });
       console.log("Question deleted:", questionId);
@@ -79,7 +79,7 @@ export async function deleteQuestion(questionId: string): Promise<void> {
 export async function createQuestion(
   text: string,
   categoryId: string
-): Promise<void> {
+): Promise<any> {
   await connectDb();
   const Question = getQuestionModel();
   const Category = getCategoryModel();
@@ -94,8 +94,8 @@ export async function createQuestion(
 
     let highestId = 0;
     for (const question of category.questions) {
-      if (question.id > highestId) {
-        highestId = question.id;
+      if ((question.id as number) > highestId) {
+        highestId = question.id as number;
       }
     }
 
