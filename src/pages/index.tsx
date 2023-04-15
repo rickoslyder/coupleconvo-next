@@ -24,20 +24,34 @@ const RootContainer = styled(Container)(({ theme }) => ({
 const Index: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadedFromCache, setLoadedFromCache] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   React.useEffect(() => {
     async function fetchCategories() {
       const cachedCategories = loadFromLocalStorage("categories");
-      if (cachedCategories) {
-        console.log(cachedCategories)
-        setCategories(cachedCategories);
-        setLoadedFromCache(true);
-      } else {
-        const fetchedCategories = await getCategories();
-        setCategories(fetchedCategories);
-        console.log(fetchedCategories)
-        saveToLocalStorage("categories", fetchedCategories);
-        setLoadedFromCache(false);
+      try {
+        if (cachedCategories) {
+          console.log(cachedCategories)
+          setCategories(cachedCategories);
+          setLoadedFromCache(true);
+          setLoading(false);
+        } else {
+          setLoading(true);
+          const fetchedCategories = await getCategories();
+          setLoading(false);
+          setCategories(fetchedCategories);
+          console.log(fetchedCategories)
+          saveToLocalStorage("categories", fetchedCategories);
+          setLoadedFromCache(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        setError(true);
+        let updatedErrorMessages = [...errorMessages, error.message];
+        setErrorMessages(updatedErrorMessages);
+        console.error(error);
       }
     }
 
@@ -147,11 +161,35 @@ const Index: React.FC = () => {
 
 
       <Grid container spacing={4}>
-        {categories.map((category: Category) => (
+        {!categories.length && !error && loading && (
+          <Grid item xs={12}>
+            <Typography variant="h4">Loading...</Typography>
+          </Grid>
+        )}
+
+        {!categories.length && !loading && (
+          <Grid item xs={12}>
+            <Typography variant="h4">No categories found</Typography>
+          </Grid>
+        )}
+
+        {error && (
+          <Grid item xs={12}>
+            <Typography variant="h4">Error</Typography>
+            <ul>
+              {errorMessages.length > 0 && errorMessages.map((message, index) => (
+                <li key={index}>{message}</li>
+              ))}
+            </ul>
+          </Grid>
+        )}
+
+        {categories && categories.map((category: Category) => (
           <Grid item key={category.id} xs={12} sm={6} md={4}>
             <CategoryCard category={category} onClick={handleCategoryClick} />
           </Grid>
         ))}
+
       </Grid>
     </RootContainer>
   );
