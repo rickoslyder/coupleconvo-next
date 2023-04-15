@@ -36,4 +36,5 @@ export interface GameState {
   gameOver: boolean;
   showSummary: boolean;
   categories: Category[];
+  questions: Question[];
 }

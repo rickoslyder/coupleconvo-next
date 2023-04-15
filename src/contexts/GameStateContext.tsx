@@ -64,7 +64,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
 
         if (!fetchedQuestions || fetchedQuestions.length === 0) {
             const response = await getQuestionsByCategory(state.currentCategory.name);
-            fetchedQuestions = response.questions;
+            fetchedQuestions = response;
             saveToLocalStorage(categoryQuestionsKey, fetchedQuestions);
         }
 
@@ -84,7 +84,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
                     ...prevState,
                     currentQuestion,
                     questions: remainingQuestions,
-                    numberOfQuestions: state.currentCategory.questions.length,
+                    numberOfQuestions: state.currentCategory ? state.currentCategory.questions.length : 0,
                 };
             });
         } else {

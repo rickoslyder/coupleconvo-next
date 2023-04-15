@@ -41,7 +41,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
         if (categoryName) {
             const fetchedQuestions = await getQuestionsByCategory(categoryName);
             console.log(fetchedQuestions);
-            setQuestions(fetchedQuestions.questions);
+            setQuestions(fetchedQuestions);
         } else {
             setQuestions([]);
         }

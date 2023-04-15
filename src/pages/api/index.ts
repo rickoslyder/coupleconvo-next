@@ -45,7 +45,7 @@ export async function getQuestionsByCategory(
     const response = await axios.post(`${API_URL}/categories/questions`, {
       categoryName,
     });
-    return response.data;
+    return response.data.questions;
   } catch (error) {
     console.error("Error fetching questions:", error);
     return [];
@@ -83,17 +83,17 @@ export async function generateQuestions(
   }
 }
 
-export async function deleteCategory(categoryName: string): Promise<any[]> {
-  try {
-    const response = await axios.delete(`${API_URL}/categories/questions`, {
-      categoryName,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting questions:", error);
-    return [];
-  }
-}
+// export async function deleteCategory(categoryName: string): Promise<any[]> {
+//   try {
+//     const response = await axios.delete(`${API_URL}/categories/questions`, {
+//       categoryName,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error deleting questions:", error);
+//     return [];
+//   }
+// }
 
 export async function deleteQuestion(questionId: string): Promise<any[]> {
   console.log("Deleting question:", questionId);
