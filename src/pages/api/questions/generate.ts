@@ -71,8 +71,8 @@ export default async function handler(
         // Find the highest id value in the category
         let highestId = 0;
         for (const question of categoryObj.questions) {
-          if (question.id > highestId) {
-            highestId = question.id;
+          if ((question.id as number) > highestId) {
+            highestId = question.id as number;
           }
         }
 
@@ -166,8 +166,8 @@ async function generateAndSaveQuestions(numQuestionsPerCategory = 50) {
       // Find the highest id value in the category
       let highestId = 0;
       for (const question of category.questions) {
-        if (question.id > highestId) {
-          highestId = question.id;
+        if ((question.id as number) > highestId) {
+          highestId = question.id as number;
         }
       }
 

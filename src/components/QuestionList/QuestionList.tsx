@@ -85,7 +85,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
     );
 };
 
-export const Question = ({ question, handleUpdateQuestionText, fetchQuestions, key }) => {
+export const Question = ({ question, handleUpdateQuestionText, fetchQuestions }) => {
     const questionInputRef = useRef<HTMLInputElement>(null);
     const [questionText, setQuestionText] = useState<string>(question.text);
 
@@ -98,10 +98,11 @@ export const Question = ({ question, handleUpdateQuestionText, fetchQuestions, k
         }
         await deleteQuestion(questionId);
         fetchQuestions();
+        alert("Question deleted");
     };
 
     return (
-        <ListItem key={key}>
+        <ListItem key={question._id}>
             <FormControl>
                 <Input
                     type="text"

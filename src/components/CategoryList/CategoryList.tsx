@@ -42,12 +42,11 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, fetchCategories
 
     const { register, handleSubmit, reset } = useForm<NewCategoryFormData>();
 
-    const questionInputRef = useRef<HTMLInputElement>(null);
-
     const handleUpdateQuestionText = (questionId: string, updatedText: any) => {
         if (questionId && updatedText) {
             console.log(updatedText);
             updateQuestionText(questionId, updatedText, selectedCategory);
+            alert("Question updated successfully")
         } else {
             console.log("No question id or updated text provided");
         }
@@ -97,6 +96,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, fetchCategories
                 {categories.map((category) => (
                     <ListItem key={category._id}>
                         <Typography onClick={() => setSelectedCategory(category.name)}>{`${category.name} (${category.questions.length}) `}</Typography>
+                        {"  "}
                         <Button onClick={() => handleGenerateQuestions(category.id)} variant="contained">
                             {showNewQuestionInput ? `Generate ${numOfNewQuestions} questions` : 'Click to generate questions'}
                         </Button>

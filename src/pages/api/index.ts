@@ -84,7 +84,7 @@ export async function generateQuestions(
 }
 
 export async function deleteCategory(categoryName: string): Promise<any[]> {
-  // TODO: Create /categories/:categoryName endpoint
+  // TODO: Create /categories/:categoryId endpoint
   try {
     const response = await axios.delete(`${API_URL}/categories/questions`);
     return response.data;
