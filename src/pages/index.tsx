@@ -63,18 +63,9 @@ const Index: React.FC = () => {
   const router = useRouter();
 
   // Added player names and sameQuestion state
-  const [player1, setPlayer1] = useState("");
-  const [player2, setPlayer2] = useState("");
+  const [player1, setPlayer1] = useState(loadFromLocalStorage("player1_name") || "");
+  const [player2, setPlayer2] = useState(loadFromLocalStorage("player2_name") || "");
   const [sameQuestion, setSameQuestion] = useState(false);
-
-  // Handle submit for player names and same/different questions setting
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    router.push({
-      pathname: "/question",
-      query: { player1, player2, sameQuestion },
-    });
-  };
 
   const [gameMode, setGameMode] = useState<"infinite" | "timed" | "unlimited" | "preset">("unlimited");
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
@@ -82,6 +73,8 @@ const Index: React.FC = () => {
   const [showSummary, setShowSummary] = useState(false);
 
   const handleCategoryClick = (category: Category) => {
+    saveToLocalStorage("player1_name", player1);
+    saveToLocalStorage("player2_name", player2);
     startGame(category, gameMode);
     setState((prevState) => ({ ...prevState, gameOver: false, sameQuestion: sameOrDifferent === "same" }));
     setShowSummary(false);
@@ -122,21 +115,27 @@ const Index: React.FC = () => {
           <TextField
             id="player1"
             type="text"
+            defaultValue={""}
             value={player1}
             onChange={(e) => setPlayer1(e.target.value)}
             fullWidth
             label="Player 1 Name"
             sx={{ mb: 2 }}
+            focused
+            variant='standard'
           />
         </Box>
         <Box>
           <TextField
             id="player2"
             type="text"
+            defaultValue={""}
             value={player2}
             onChange={(e) => setPlayer2(e.target.value)}
             fullWidth
             label="Player 2 Name"
+            variant='standard'
+            focused
           />
         </Box>
       </FormControl>
