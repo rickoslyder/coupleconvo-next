@@ -78,14 +78,14 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
             {questions && questions.length > 0 && <Typography variant="h4">{categoryName}:</Typography>}
             <List>
                 {questions.map((question) => (
-                    <Question question={question} handleUpdateQuestionText={handleUpdateQuestionText} fetchQuestions={fetchQuestions} />
+                    <Question key={question._id} question={question} handleUpdateQuestionText={handleUpdateQuestionText} fetchQuestions={fetchQuestions} />
                 ))}
             </List>
         </Container>
     );
 };
 
-export const Question = ({ question, handleUpdateQuestionText, fetchQuestions }) => {
+export const Question = ({ question, handleUpdateQuestionText, fetchQuestions, key }) => {
     const questionInputRef = useRef<HTMLInputElement>(null);
     const [questionText, setQuestionText] = useState<string>(question.text);
 
@@ -101,7 +101,7 @@ export const Question = ({ question, handleUpdateQuestionText, fetchQuestions })
     };
 
     return (
-        <ListItem key={question._id}>
+        <ListItem key={key}>
             <FormControl>
                 <Input
                     type="text"
