@@ -103,7 +103,7 @@ const Index: React.FC = () => {
   return (
     <RootContainer>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h1">CoupleConvo</Typography>
+        <Typography variant="h2">CoupleConvo</Typography>
         <Typography variant="h5">The ultimate conversation starter game for couples</Typography>
       </Box>
 
