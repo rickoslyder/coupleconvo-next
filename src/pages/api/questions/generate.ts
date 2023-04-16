@@ -45,7 +45,7 @@ export default async function handler(
 
     try {
       const categoryObj = await CategoryModel.findOne({
-        id: category,
+        $or: [{ id: category }, { _id: category }],
       }).populate("questions");
 
       if (!categoryObj) {
@@ -56,11 +56,23 @@ export default async function handler(
         // console.log(category);
       }
 
-      let prompt = `Generate new questions for the category "${categoryObj.name}" based on these existing questions:\n\n`;
+      let prompt;
 
-      const randomQuestions = getRandomElements(categoryObj.questions, 5); // Use the getRandomElements function
-      for (const question of randomQuestions) {
-        prompt += `- ${question.text}\n`;
+      if (categoryObj.questions.length === 0) {
+        prompt = `Generate new questions for the category "${categoryObj.name} - bearing in mind that the description of this category is "${categoryObj.description}":\n\n`;
+      } else {
+        prompt = `Generate new questions for the category "${
+          categoryObj.name
+        }", using these existing questions as an example (but please be inventive${
+          categoryObj.name === "Would you rather"
+            ? `, ideally don't return any "Would you rather have a partner who..." questions`
+            : ""
+        }):\n\n`;
+
+        const randomQuestions = getRandomElements(categoryObj.questions, 5); // Use the getRandomElements function
+        for (const question of randomQuestions) {
+          prompt += `- ${question.text}\n`;
+        }
       }
 
       console.log("Prompt:", prompt);
@@ -119,7 +131,7 @@ async function generateQuestion(
         },
         {
           role: "user",
-          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs.`,
+          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs, and also that all generated questions are for this category only.`,
         },
       ],
       max_tokens: max_tokens,

@@ -97,7 +97,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, fetchCategories
                     <ListItem key={category._id}>
                         <Typography onClick={() => setSelectedCategory(category.name)}>{`${category.name} (${category.questions.length}) `}</Typography>
                         {"  "}
-                        <Button onClick={() => handleGenerateQuestions(category.id)} variant="contained">
+                        <Button onClick={() => handleGenerateQuestions(category._id)} variant="contained">
                             {showNewQuestionInput ? `Generate ${numOfNewQuestions} questions` : 'Click to generate questions'}
                         </Button>
                         {showNewQuestionInput && (

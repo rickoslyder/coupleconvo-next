@@ -22,8 +22,9 @@ export default async function handler(
   if (req.method === "GET") {
     await fetchCategories(req, res);
   } else if (req.method === "POST") {
-    const { categoryId } = req.body;
-    await createCategory(categoryId);
+    const { name, description } = req.body;
+    const newCategory = await createCategory(name, description);
+    res.status(200).json({ newCategory });
   } else if (req.method === "DELETE") {
     const { data } = req.body;
     await deleteCategory(data);
@@ -70,14 +71,29 @@ export async function deleteCategory(categoryId: string): Promise<void> {
   }
 }
 
-export async function createCategory(data: NewCategoryFormData): Promise<void> {
+export async function createCategory(
+  name: string,
+  description: string
+): Promise<any> {
   await connectDb();
-  const Question = getQuestionModel();
   const Category = getCategoryModel();
+  const categories = await Category.find().populate("questions");
 
   try {
-    const newCategory = new Category({ ...data });
+    let highestId = 0;
+    for (const category of categories) {
+      if ((category?.id as number) > highestId) {
+        highestId = category.id as number;
+      }
+    }
+
+    const newCategory = new Category({
+      id: ((highestId as number) + 1) as number,
+      name,
+      description,
+    });
     await newCategory.save();
+    return newCategory;
   } catch (error) {
     console.error("Error creating category:", error);
   }
