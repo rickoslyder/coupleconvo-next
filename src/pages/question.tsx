@@ -114,9 +114,6 @@ const Question: React.FC = () => {
         }
     };
 
-    console.log(state)
-    console.log(currentQuestion)
-
     return (
         <RootContainer maxWidth="sm">
             <Typography variant="h4" sx={{ mb: 3 }}><center>{currentPlayer}</center></Typography>

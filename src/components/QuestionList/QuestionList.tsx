@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { getQuestionsByCategory } from "../../pages/api";
 import { useForm } from "react-hook-form";
-import { createQuestion } from "../../pages/api";
-import { deleteQuestion } from "../../pages/api";
+import { createQuestion, deleteQuestion, sanitizeCategory } from "../../pages/api";
 import {
     Box,
     Button,
@@ -55,10 +54,27 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
 
     const handleNewQuestionSubmit = async (data: NewQuestionFormData) => {
         if (categoryName) {
-            await createQuestion(data.text, categoryName);
+            await createQuestion({ text: data.text, categoryName: categoryName });
             fetchQuestions();
             reset();
         }
+    };
+
+    const handleSanitize = async (categoryName: string | null) => {
+        if (categoryName) {
+            try {
+                console.log("Sanitizing questions in category: " + categoryName)
+                const sanitizedQuestions = await sanitizeCategory(categoryName);
+                console.log('Sanitized questions: ', sanitizedQuestions);
+                setQuestions(sanitizedQuestions);
+                alert("Category sanitized");
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        reset();
+
     };
 
     return (
@@ -76,6 +92,8 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
             <br />
             {questions && questions.length === 0 && <Typography variant="h3">No questions yet</Typography>}
             {questions && questions.length > 0 && <Typography variant="h4">{categoryName}:</Typography>}
+            <br />
+            {questions && questions.length > 0 && <Button variant="contained" color="warning" fullWidth onClick={() => handleSanitize(categoryName)}>Sanitize Category</Button>}
             <List>
                 {questions.map((question) => (
                     <Question key={question._id} question={question} handleUpdateQuestionText={handleUpdateQuestionText} fetchQuestions={fetchQuestions} />
@@ -90,12 +108,18 @@ export const Question = ({ question, handleUpdateQuestionText, fetchQuestions })
     const [questionText, setQuestionText] = useState<string>(question.text);
 
     const handleDeleteQuestion = async (questionId: any) => {
+        const confirmDelete = confirm("Are you sure you want to delete this question?");
         console.log("Deleting question: " + questionId)
-        console.log(typeof questionId);
+
         if (!questionId) {
             console.log("No question id provided");
             return;
         }
+        if (!confirmDelete) {
+            console.log("Delete cancelled");
+            return;
+        }
+
         await deleteQuestion(questionId);
         fetchQuestions();
         alert("Question deleted");

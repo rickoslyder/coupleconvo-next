@@ -52,16 +52,31 @@ export async function getQuestionsByCategory(
   }
 }
 
-export async function createQuestion(
-  text: string,
-  categoryId: string
-): Promise<void> {
+export async function createQuestion(data: {
+  text: string;
+  categoryId?: string;
+  categoryName?: string;
+}): Promise<void> {
+  const { text, categoryId, categoryName } = data;
+
   try {
-    const response = await axios.post(`${API_URL}/questions/create`, {
-      text,
-      categoryId,
-    });
-    return response.data;
+    if (!categoryId && !categoryName) {
+      throw new Error("Category ID or name not provided");
+    }
+
+    if (categoryId) {
+      const response = await axios.post(`${API_URL}/questions/create`, {
+        text,
+        categoryId,
+      });
+      return response.data;
+    } else if (categoryName) {
+      const response = await axios.post(`${API_URL}/questions/create`, {
+        text,
+        categoryName,
+      });
+      return response.data;
+    }
   } catch (error) {
     console.error("Error creating questions:", error);
   }
@@ -106,5 +121,16 @@ export async function deleteQuestion(questionId: string): Promise<any[]> {
   } catch (error) {
     console.error("Error deleting questions:", error);
     return [];
+  }
+}
+
+export async function sanitizeCategory(categoryName: string): Promise<any[]> {
+  try {
+    const response = await axios.post(`${API_URL}/categories/sanitize`, {
+      categoryName,
+    });
+    return response.data.sanitizedQuestions;
+  } catch (error) {
+    console.error(`Error sanitizing category ${categoryName}:`, error);
   }
 }
