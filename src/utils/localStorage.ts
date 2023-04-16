@@ -8,6 +8,9 @@ export function saveToLocalStorage(key: string, value: any) {
 }
 
 export function loadFromLocalStorage(key: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
   try {
     const serializedValue = localStorage.getItem(key);
     if (serializedValue === null) {
