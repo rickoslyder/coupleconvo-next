@@ -101,6 +101,7 @@ const Question: React.FC = () => {
 
     const handleNextQuestion = () => {
         if (sameOrDifferent !== "same") {
+            setCurrentPlayer(currentPlayer === player1 ? player2 : player1)
             nextQuestion();
             return;
         }
