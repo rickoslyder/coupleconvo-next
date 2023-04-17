@@ -161,6 +161,7 @@ export const Question = ({ question, handleUpdateQuestionText, fetchQuestions })
                     fullWidth
                 />
             </FormControl>
+            _id = {question._id}
             <CardActions>
                 <IconButton onClick={() => handleUpdateQuestionText(question._id, questionText)}>
                     <SaveIcon />
