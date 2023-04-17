@@ -78,6 +78,17 @@ async function sanitizeQuestions(model, category) {
         savedQuestion === question; // true
       }); // Save the sanitized question back to the database
     }
+
+    if (question.text.startsWith("Question")) {
+      const regex = /^Question \d+(?::|=) /;
+      // Remove the "Question" prefix
+      question.text = question.text.replace(regex, "");
+      console.log("Sanitized question:", question.text);
+      question.validateSync(); // Validate the sanitized question
+      return await question.save().then((savedQuestion) => {
+        savedQuestion === question; // true
+      }); // Save the sanitized question back to the database
+    }
   });
 
   await Promise.all(sanitizeTasks);
