@@ -1,8 +1,7 @@
 // src/contexts/GameStateContext.tsx
 import React, { createContext, useState } from 'react';
 import { GameState, Category, GameMode, Question } from '@/types';
-import { getCategories } from "@/utils/categories";
-import { getQuestionsByCategory } from "@/pages/api";
+import { getCategories, getQuestionsByCategory } from "@/pages/api";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/utils/localStorage";
 
 interface GameStateContextType {
@@ -49,26 +48,58 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
     }, [state.currentCategory, state.currentQuestionIndex, state.questions]);
 
     const startGame = async (category: Category, gameMode: GameMode) => {
-        const categoryQuestionsKey = `questions_${category.id}`;
-        let fetchedQuestions = loadFromLocalStorage(categoryQuestionsKey);
+        if (category.name === 'Random') {
+            const allCategories = await getCategories();
+            let allQuestions: Question[] = [];
 
-        if (!fetchedQuestions || fetchedQuestions.length === 0) {
-            const response = await getQuestionsByCategory(category.name);
-            fetchedQuestions = response;
-            saveToLocalStorage(categoryQuestionsKey, fetchedQuestions);
-        }
+            for (const cat of allCategories) {
+                const categoryQuestionsKey = `questions_${cat.id}`;
+                let fetchedQuestions = loadFromLocalStorage(categoryQuestionsKey);
 
-        // Shuffle the questions
-        const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
+                if (!fetchedQuestions || fetchedQuestions.length === 0) {
+                    const response = await getQuestionsByCategory(cat.name);
+                    fetchedQuestions = response;
+                    saveToLocalStorage(categoryQuestionsKey, fetchedQuestions);
+                }
 
-        setState((prevState) => ({
-            ...prevState,
-            currentCategory: category,
-            gameMode,
-            currentQuestionIndex: 0,
-            questions: shuffledQuestions,
-            numberOfQuestions: fetchedQuestions.length,
-        }));
+                // Shuffle the questions and take the first 15 (or all if there are less than 15)
+                const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random()).slice(0, 15);
+                allQuestions = allQuestions.concat(shuffledQuestions);
+            }
+
+            // Shuffle all questions from all categories
+            const shuffledAllQuestions = allQuestions.sort(() => 0.5 - Math.random());
+
+            setState((prevState) => ({
+                ...prevState,
+                currentCategory: category,
+                gameMode,
+                currentQuestionIndex: 0,
+                questions: shuffledAllQuestions,
+                numberOfQuestions: shuffledAllQuestions.length,
+            }));
+        } else {
+            const categoryQuestionsKey = `questions_${category.id}`;
+            let fetchedQuestions = loadFromLocalStorage(categoryQuestionsKey);
+
+            if (!fetchedQuestions || fetchedQuestions.length === 0) {
+                const response = await getQuestionsByCategory(category.name);
+                fetchedQuestions = response;
+                saveToLocalStorage(categoryQuestionsKey, fetchedQuestions);
+            }
+
+            // Shuffle the questions
+            const shuffledQuestions = fetchedQuestions.sort(() => 0.5 - Math.random());
+
+            setState((prevState) => ({
+                ...prevState,
+                currentCategory: category,
+                gameMode,
+                currentQuestionIndex: 0,
+                questions: shuffledQuestions,
+                numberOfQuestions: fetchedQuestions.length,
+            }));
+        };
     };
 
     const nextQuestion = () => {

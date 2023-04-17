@@ -15,6 +15,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import QuizIcon from '@mui/icons-material/Quiz';
 import { Box } from '@mui/material';
 import { Typography } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 // import '../styles/globals.css';
 
 const RootContainer = styled(Container)(({ theme }) => ({
@@ -98,6 +99,13 @@ const Index: React.FC = () => {
     event: SelectChangeEvent<"same" | "different">
   ) => {
     setSameOrDifferentState(event.target.value as "same" | "different");
+  };
+
+  const randomCategory: Category = {
+    id: uuidv4(),
+    name: 'Random',
+    description: 'A mix of questions from all categories.',
+    questions: [],
   };
 
   console.log(categories)
@@ -224,6 +232,12 @@ const Index: React.FC = () => {
                 <li key={index}>{message}</li>
               ))}
             </ul>
+          </Grid>
+        )}
+
+        {categories && categories.length > 0 && !loading && !error && (
+          <Grid item xs={12}>
+            <CategoryCard centred category={randomCategory} onClick={handleCategoryClick} />
           </Grid>
         )}
 

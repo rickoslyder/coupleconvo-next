@@ -36,14 +36,37 @@
 // src/components/CategoryCard/CategoryCard.tsx
 import React from 'react';
 import { Category } from '@/types';
-import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
 
 interface CategoryCardProps {
     category: Category;
     onClick: (category: Category) => void;
+    centred?: boolean;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick, centred = false }) => {
+
+    if (centred) {
+        return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Card>
+                    <CardActionArea onClick={() => onClick(category)}>
+                        <CardContent>
+                            <center>
+                                <Typography variant="h5" component="div">
+                                    {category.name}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {category.description}
+                                </Typography>
+                            </center>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </Box>
+        );
+    }
+
     return (
         <Card>
             <CardActionArea onClick={() => onClick(category)}>
