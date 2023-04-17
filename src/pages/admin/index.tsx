@@ -1,5 +1,5 @@
 // src/pages/admin/index.tsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import CategoryList from "../../components/CategoryList/CategoryList";
 import { getCategories } from "../../pages/api";
 import { Box, Button, Container, Typography } from "@mui/material";
@@ -47,14 +47,16 @@ const AdminPage: React.FC = () => {
     return (
         <Container>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
-                <Typography variant="h1">Admin Page</Typography>
-                <Button
-                    className={styles["fetch-button"]}
-                    onClick={() => fetchCategories(true)}
-                    variant="contained"
-                >
-                    Fetch Latest Categories
-                </Button>
+                <Typography variant="h3" gutterBottom>Admin Page</Typography>
+                <Box mt={2} mb={4}>
+                    <Button
+                        className={styles["fetch-button"]}
+                        onClick={() => fetchCategories(true)}
+                        variant="contained"
+                    >
+                        Fetch Latest Categories
+                    </Button>
+                </Box>
                 <CategoryList
                     categories={categories}
                     fetchCategories={fetchCategories}

@@ -100,6 +100,8 @@ const Index: React.FC = () => {
     setSameOrDifferentState(event.target.value as "same" | "different");
   };
 
+  console.log(categories)
+
   return (
     <RootContainer>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>

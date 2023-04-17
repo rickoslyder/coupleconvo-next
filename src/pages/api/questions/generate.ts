@@ -56,16 +56,17 @@ export default async function handler(
         // console.log(category);
       }
 
-      let prompt;
+      let prompt: string;
 
+      // if category has no questions, generate new questions from scratch
       if (categoryObj.questions.length === 0) {
-        prompt = `Generate new questions for the category "${categoryObj.name} - bearing in mind that the description of this category is "${categoryObj.description}":\n\n`;
+        prompt = `Generate new questions for the category "${categoryObj.name}" - bearing in mind that the description of this category is "${categoryObj.description}":\n\n`;
       } else {
         prompt = `Generate new questions for the category "${
           categoryObj.name
         }", using these existing questions as an example (but please be inventive${
           categoryObj.name === "Would you rather"
-            ? `, ideally don't return any "Would you rather have a partner who..." questions`
+            ? `, ideally don't return any "Would you rather have a partner who..." or similar questions`
             : ""
         }):\n\n`;
 
@@ -79,9 +80,10 @@ export default async function handler(
 
       const newQuestionsText = await generateQuestion(prompt, num, 2048);
 
+      let highestId = 0;
+
       for (const newQuestionText of newQuestionsText) {
         // Find the highest id value in the category
-        let highestId = 0;
         for (const question of categoryObj.questions) {
           if ((question.id as number) > highestId) {
             highestId = question.id as number;
@@ -94,6 +96,8 @@ export default async function handler(
           text: newQuestionText,
           category: categoryObj._id,
         });
+
+        highestId++;
 
         console.log("New question:", newQuestion);
 
@@ -127,11 +131,11 @@ async function generateQuestion(
         {
           role: "system",
           content:
-            "You are a helpful assistant, creating questions for a game called CoupleConvo. CoupleConvo is the ultimate conversation starter game for couples looking to deepen their connection.\n\nOur game covers a wide range of categories and prompts, ensuring that you and your partner never run out of things to talk about. Whether you're looking to rekindle the flame or just want to have some fun, CoupleConvo has got you covered. Try it out today and watch your relationship grow stronger than ever before!\n\nThis game will be written in React, but as a Next.js PWA to make it playable on both mobile and web. \n\nBelow are a list of categories and question prompts that users will be able to choose from:\n- Would you rather\n- Most likely to\n- Never have I ever\n- Complete the sentence\n- Fun questions\n- Deep questions\n- Controversial questions\n\nFeatures/Modes:\n- timed mode vs unlimited mode\n- preset number of questions vs infinite mode\n- Both users either answer same question or answer different questions\n- offline access = paid\n- analytics & user classification (e.g. user chooses the riskier options, enjoys intimate conversations, etc.)\n- tailor questions based on various factors - age, marital status, sexuality, length of relationship, etc\n- Uses OpenAI’s gpt-4 model to generate more questions and to analyze the users’ responses\n- ",
+            "You are a helpful assistant, creating questions for a game called CoupleConvo. CoupleConvo is the ultimate conversation starter game for couples looking to deepen their connection.\n\nOur game covers a wide range of categories and prompts, ensuring that you and your partner never run out of things to talk about. Whether you're looking to rekindle the flame or just want to have some fun, CoupleConvo has got you covered. Try it out today and watch your relationship grow stronger than ever before!\n\nThis game will be written in React, but as a Next.js PWA to make it playable on both mobile and web.",
         },
         {
           role: "user",
-          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs, and also that all generated questions are for this category only.`,
+          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs, and also that all generated questions are for this category only. Push the limits on what's appropriate for this category, but please don't go too far.`,
         },
       ],
       max_tokens: max_tokens,

@@ -20,14 +20,57 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
-    await fetchCategories(req, res);
+    try {
+      await fetchCategories(req, res);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({
+        errorMsg: "Error fetching categories",
+        error: error.message ?? error,
+      });
+    }
   } else if (req.method === "POST") {
     const { name, description } = req.body;
-    const newCategory = await createCategory(name, description);
-    res.status(200).json({ newCategory });
+
+    try {
+      const newCategory = await createCategory(name, description);
+      res.status(200).json({ newCategory });
+    } catch (error) {
+      console.error("Error creating category:", error);
+      res.status(500).json({
+        errorMsg: "Error creating category",
+        error: error.message ?? error,
+      });
+    }
+  } else if (req.method === "PUT") {
+    if (!req.body) {
+      res.status(400).json({ error: "Invalid request body" });
+      return;
+    }
+
+    try {
+      const updatedCategory = await updateCategory(req.body);
+      res.status(200).json(updatedCategory);
+    } catch (error) {
+      console.error("Error updating category:", error);
+      res.status(500).json({
+        errorMsg: "Error updating category",
+        error: error.message ?? error,
+      });
+    }
   } else if (req.method === "DELETE") {
-    const { data } = req.body;
-    await deleteCategory(data);
+    const { _id } = req.body;
+
+    try {
+      await deleteCategory(_id);
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      res.status(500).json({
+        errorMsg: "Error deleting category",
+        error: error.message ?? error,
+      });
+    }
   } else {
     res.status(405).json({ error: "Method not allowed" });
   }
@@ -96,5 +139,64 @@ export async function createCategory(
     return newCategory;
   } catch (error) {
     console.error("Error creating category:", error);
+  }
+}
+
+export async function updateCategory(data: {
+  _id: string;
+  id: string | number;
+  name: string;
+  description: string;
+}): Promise<any> {
+  const { _id, id, name, description } = data;
+  if (!id) {
+    console.error("No id provided for category");
+    return;
+  }
+
+  if (!name) {
+    console.error("No name provided for category");
+    return;
+  }
+
+  if (!description) {
+    console.error("No description provided for category");
+    return;
+  }
+
+  if (typeof name !== "string") {
+    console.error("Name is not a string");
+    return;
+  }
+
+  if (typeof description !== "string") {
+    console.error("Description is not a string");
+    return;
+  }
+
+  await connectDb();
+  const Category = getCategoryModel();
+
+  if (_id) {
+    try {
+      const updatedCategory = await Category.findByIdAndUpdate(_id, {
+        id,
+        name,
+        description,
+      });
+      return updatedCategory;
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+  } else {
+    try {
+      const updatedCategory = await Category.findByIdAndUpdate(id, {
+        name,
+        description,
+      });
+      return updatedCategory;
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
   }
 }

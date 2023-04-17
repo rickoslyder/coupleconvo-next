@@ -6,15 +6,23 @@ import { createQuestion, deleteQuestion, sanitizeCategory } from "../../pages/ap
 import {
     Box,
     Button,
+    Card,
+    CardActions,
+    CardContent,
     Container,
     FormControl,
     FormGroup,
+    Grid,
+    IconButton,
     InputLabel,
     Input,
     List,
     ListItem,
     Typography,
+    TextField,
 } from "@mui/material";
+import { Delete as DeleteIcon, Save as SaveIcon } from "@mui/icons-material";
+
 
 interface NewQuestionFormData {
     text: string;
@@ -79,26 +87,44 @@ const QuestionList: React.FC<QuestionListProps> = ({ categoryName, handleUpdateQ
 
     return (
         <Container>
-            <Typography variant="h2">Questions</Typography>
-            <Box component="form" onSubmit={handleSubmit(handleNewQuestionSubmit)}>
+            <Typography variant="h4" gutterBottom>Questions</Typography>
+            <Box component="form" onSubmit={handleSubmit(handleNewQuestionSubmit)} noValidate>
                 <FormGroup>
                     <FormControl fullWidth>
                         <InputLabel htmlFor="text">Question Text:</InputLabel>
                         <Input fullWidth id="text" {...register("text", { required: true })} />
                     </FormControl>
-                    <Button type="submit" variant="contained">Create Question</Button>
+                    <Box mt={2}>
+                        <Button type="submit" variant="contained">Create Question</Button>
+                    </Box>
                 </FormGroup>
             </Box>
-            <br />
-            {questions && questions.length === 0 && <Typography variant="h3">No questions yet</Typography>}
-            {questions && questions.length > 0 && <Typography variant="h4">{categoryName}:</Typography>}
-            <br />
-            {questions && questions.length > 0 && <Button variant="contained" color="warning" fullWidth onClick={() => handleSanitize(categoryName)}>Sanitize Category</Button>}
-            <List>
+            <Box my={4}>
+                {questions && questions.length === 0 && <Typography variant="h5">No questions yet</Typography>}
+                {questions && questions.length > 0 && <Typography variant="h5">{categoryName}:</Typography>}
+            </Box>
+            {questions && questions.length > 0 && (
+                <Box mb={2}>
+                    <Button variant="contained" color="warning" fullWidth onClick={() => handleSanitize(categoryName)}>
+                        Sanitize Category
+                    </Button>
+                </Box>
+            )}
+            <Grid container spacing={2}>
                 {questions.map((question) => (
-                    <Question key={question._id} question={question} handleUpdateQuestionText={handleUpdateQuestionText} fetchQuestions={fetchQuestions} />
+                    <Grid item xs={12} key={question._id}>
+                        <Card>
+                            <CardContent>
+                                <Question
+                                    question={question}
+                                    handleUpdateQuestionText={handleUpdateQuestionText}
+                                    fetchQuestions={fetchQuestions}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 ))}
-            </List>
+            </Grid>
         </Container>
     );
 };
@@ -126,24 +152,24 @@ export const Question = ({ question, handleUpdateQuestionText, fetchQuestions })
     };
 
     return (
-        <ListItem key={question._id}>
-            <FormControl>
-                <Input
-                    type="text"
+        <Box>
+            <FormControl fullWidth>
+                <TextField
                     defaultValue={question.text}
-                    ref={questionInputRef}
-                    sx={{ width: "50vw" }}
                     onChange={(e) => setQuestionText(e.target.value)}
                     multiline
+                    fullWidth
                 />
             </FormControl>
-            <Button onClick={() => handleUpdateQuestionText(question._id, questionText)} variant="contained">
-                Save
-            </Button>
-            <Button onClick={() => handleDeleteQuestion(question._id)} variant="contained" color="error">
-                Delete
-            </Button>
-        </ListItem>
+            <CardActions>
+                <IconButton onClick={() => handleUpdateQuestionText(question._id, questionText)}>
+                    <SaveIcon />
+                </IconButton>
+                <IconButton onClick={() => handleDeleteQuestion(question._id)} color="error">
+                    <DeleteIcon />
+                </IconButton>
+            </CardActions>
+        </Box>
     );
 };
 
