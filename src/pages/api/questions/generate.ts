@@ -126,7 +126,7 @@ async function generateQuestion(
   console.log("Generating questions...");
   try {
     const response = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
       messages: [
         {
           role: "system",
@@ -135,7 +135,7 @@ async function generateQuestion(
         },
         {
           role: "user",
-          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs, and also that all generated questions are for this category only. Push the limits on what's appropriate for this category, but please don't go too far.`,
+          content: `${prompt} Please generate ${numQuestions} new questions for this category, following this format:\n\n- Question 1\n- Question 2\n- Question 3\n\nIt is imperative that you follow this format at all costs, and also that all generated questions are for this category only. Push the limits on what's appropriate for this category, but please don't go too far. Please also ensure that these questions are not semantically similar to the existing questions in this category.`,
         },
       ],
       max_tokens: max_tokens,
