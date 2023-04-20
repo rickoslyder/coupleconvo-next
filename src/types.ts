@@ -37,4 +37,5 @@ export interface GameState {
   showSummary: boolean;
   categories: Category[];
   questions: Question[];
+  fetchingQuestions: boolean;
 }

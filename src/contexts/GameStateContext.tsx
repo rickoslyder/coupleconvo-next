@@ -25,6 +25,7 @@ const initialState: GameState = {
     showSummary: false,
     categories: [],
     questions: [],
+    fetchingQuestions: false,
 };
 
 export const GameStateContext = createContext<GameStateContextType>({} as GameStateContextType);
@@ -49,6 +50,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
 
     const startGame = async (category: Category, gameMode: GameMode) => {
         if (category.name === 'Random') {
+            setState((prevState) => ({ ...prevState, fetchingQuestions: true }));
             const allCategories = await getCategories();
             let allQuestions: Question[] = [];
 
@@ -77,8 +79,10 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
                 currentQuestionIndex: 0,
                 questions: shuffledAllQuestions,
                 numberOfQuestions: shuffledAllQuestions.length,
+                fetchingQuestions: false,
             }));
         } else {
+            setState((prevState) => ({ ...prevState, fetchingQuestions: true }));
             const categoryQuestionsKey = `questions_${category.id}`;
             let fetchedQuestions = loadFromLocalStorage(categoryQuestionsKey);
 
@@ -98,6 +102,7 @@ export const GameStateProvider: React.FC<GameStateProviderProps> = ({ children }
                 currentQuestionIndex: 0,
                 questions: shuffledQuestions,
                 numberOfQuestions: fetchedQuestions.length,
+                fetchingQuestions: false,
             }));
         };
     };

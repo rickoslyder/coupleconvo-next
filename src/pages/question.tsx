@@ -28,8 +28,8 @@ const ModeIndicator = styled('div')(({ theme }) => ({
 
 const Question: React.FC = () => {
     const { state, setState, nextQuestion, endGame, resetGame, showGameSummary } = React.useContext(GameStateContext);
-    const [timeRemaining, setTimeRemaining] = React.useState<number>(10);
-    const { currentQuestion, currentQuestionIndex, gameMode, sameOrDifferent, questions, numberOfQuestions } = state;
+    const [timeRemaining, setTimeRemaining] = React.useState<number>(30);
+    const { currentQuestion, currentQuestionIndex, gameMode, sameOrDifferent, questions, numberOfQuestions, fetchingQuestions } = state;
     const router = useRouter();
 
     const { player1, player2, sameQuestion } = router.query;
@@ -49,7 +49,7 @@ const Question: React.FC = () => {
                 setTimeRemaining((prevTime) => prevTime - 1);
                 if (timeRemaining === 0) {
                     nextQuestion();
-                    setTimeRemaining(10);
+                    setTimeRemaining(30);
                 }
             }, 1000);
 
@@ -58,12 +58,6 @@ const Question: React.FC = () => {
             };
         }
     }, [gameMode, nextQuestion, timeRemaining]);
-
-    React.useEffect(() => {
-        if (!currentQuestion) {
-            nextQuestion();
-        }
-    }, [currentQuestion, nextQuestion]);
 
     React.useEffect(() => {
         if (gameMode === 'timed') {
@@ -118,8 +112,8 @@ const Question: React.FC = () => {
     return (
         <RootContainer maxWidth="sm">
             <Typography variant="h4" sx={{ mb: 3 }}><center>{currentPlayer}</center></Typography>
-            <ProgressIndicator current={currentQuestionIndex + 1} total={numberOfQuestions} />
-            <QuestionCard question={currentQuestion?.text || null} />
+            <ProgressIndicator current={currentQuestionIndex + 1} total={numberOfQuestions} loading={fetchingQuestions} />
+            <QuestionCard question={currentQuestion?.text || null} loading={fetchingQuestions} />
             <ModeIndicatorWrapper container spacing={2}>
                 <Grid container item spacing={2} xs={12}>
                     <Grid item xs={12}>

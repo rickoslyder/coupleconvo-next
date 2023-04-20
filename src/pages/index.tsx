@@ -33,7 +33,7 @@ const Index: React.FC = () => {
     async function fetchCategories() {
       const cachedCategories = loadFromLocalStorage("categories");
       try {
-        if (cachedCategories) {
+        if (cachedCategories && cachedCategories.length > 0) {
           console.log("Loaded categories from local storage")
           console.log(cachedCategories)
           setCategories(cachedCategories);
@@ -241,7 +241,7 @@ const Index: React.FC = () => {
           </Grid>
         )}
 
-        {categories && categories.map((category: Category) => (
+        {categories && categories.length > 0 && categories.map((category: Category) => (
           <Grid item key={category.id} xs={12} sm={6} md={4}>
             <CategoryCard category={category} onClick={handleCategoryClick} />
           </Grid>

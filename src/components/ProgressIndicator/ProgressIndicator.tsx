@@ -13,17 +13,19 @@ const ProgressWrapper = styled('div')({
 interface ProgressIndicatorProps {
     current: number;
     total: number;
+    loading: boolean;
 }
 
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     current,
     total,
+    loading,
 }) => {
     const progressPercentage = (current / total) * 100;
 
     return (
         <ProgressWrapper>
-            <Typography variant="body2">Question {current} of {total}</Typography>
+            <Typography variant="body2">{!loading ? `Question ${current} of ${total}` : 'Loading...'}</Typography>
             <LinearProgress variant="determinate" value={progressPercentage} />
         </ProgressWrapper>
     );
