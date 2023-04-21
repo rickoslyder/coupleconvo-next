@@ -37,6 +37,8 @@ const Question: React.FC = () => {
     const [currentPlayer, setCurrentPlayer] = React.useState(player1);
 
     let timeToUse = timed ?? DEFAULT_TIME
+
+    timeToUse = parseInt(timeToUse as string, 10);
     const [timeRemaining, setTimeRemaining] = React.useState<number>(timeToUse);
 
     React.useEffect(() => {
