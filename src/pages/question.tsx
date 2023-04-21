@@ -36,9 +36,8 @@ const Question: React.FC = () => {
     const { player1, player2, sameQuestion, timed } = router.query;
     const [currentPlayer, setCurrentPlayer] = React.useState(player1);
 
-    let timeToUse = timed ?? DEFAULT_TIME
+    let timeToUse = timed ? parseInt(timed as string, 10) : DEFAULT_TIME
 
-    timeToUse = parseInt(timeToUse as string, 10);
     const [timeRemaining, setTimeRemaining] = React.useState<number>(timeToUse);
 
     React.useEffect(() => {
@@ -145,7 +144,7 @@ const Question: React.FC = () => {
                 {gameMode === 'timed' && (
                     <Grid item
                         onClick={() => {
-                            let newTime = prompt('Each round will last for this many seconds. Default is 30 seconds.', timeToUse);
+                            let newTime = prompt('Each round will last for this many seconds. Default is 30 seconds.', timeToUse.toString());
                             if (newTime) {
                                 setTimeRemaining(parseInt(newTime));
                                 timeToUse = parseInt(newTime);
