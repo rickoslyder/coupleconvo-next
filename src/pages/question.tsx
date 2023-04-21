@@ -26,14 +26,18 @@ const ModeIndicator = styled('div')(({ theme }) => ({
     marginTop: theme.spacing(2),
 }));
 
+const DEFAULT_TIME = 30;
+
 const Question: React.FC = () => {
     const { state, setState, nextQuestion, endGame, resetGame, showGameSummary } = React.useContext(GameStateContext);
-    const [timeRemaining, setTimeRemaining] = React.useState<number>(30);
     const { currentQuestion, currentQuestionIndex, gameMode, sameOrDifferent, questions, numberOfQuestions, fetchingQuestions } = state;
     const router = useRouter();
 
-    const { player1, player2, sameQuestion } = router.query;
+    const { player1, player2, sameQuestion, timed } = router.query;
     const [currentPlayer, setCurrentPlayer] = React.useState(player1);
+
+    let timeToUse = timed ?? DEFAULT_TIME
+    const [timeRemaining, setTimeRemaining] = React.useState<number>(timeToUse);
 
     React.useEffect(() => {
         if (sameQuestion === 'true') {
@@ -43,13 +47,22 @@ const Question: React.FC = () => {
         }
     }, [sameQuestion, setState]);
 
+    // React.useEffect(() => {
+    //     if (timed) {
+    //         setState((prev) => ({ ...prev, sameOrDifferent: 'same' }));
+    //     } else {
+    //         setState((prev) => ({ ...prev, sameOrDifferent: 'different' }));
+    //     }
+    // }, [timed, setState]);
+
+
     React.useEffect(() => {
         if (gameMode === 'timed') {
             const timer = setTimeout(() => {
                 setTimeRemaining((prevTime) => prevTime - 1);
                 if (timeRemaining === 0) {
                     nextQuestion();
-                    setTimeRemaining(30);
+                    setTimeRemaining(timeToUse);
                 }
             }, 1000);
 
@@ -57,24 +70,24 @@ const Question: React.FC = () => {
                 clearTimeout(timer);
             };
         }
-    }, [gameMode, nextQuestion, timeRemaining]);
+    }, [gameMode, nextQuestion, timeRemaining, timeToUse]);
 
     React.useEffect(() => {
         if (gameMode === 'timed') {
             const timer = setTimeout(() => {
                 nextQuestion();
-            }, 10000); // Adjust the time (in milliseconds) as needed
+            }, timeToUse * 1000); // Adjust the time (in milliseconds) as needed
 
             return () => {
                 clearTimeout(timer);
             };
         }
-    }, [currentQuestion, gameMode, nextQuestion]);
+    }, [currentQuestion, gameMode, nextQuestion, timeToUse]);
 
     const CircularProgressWithLabel: React.FC<{ value: number }> = (props) => {
         return (
             <Box position="relative" display="inline-flex">
-                <CircularProgress variant="determinate" {...props} />
+                <CircularProgress variant="determinate" value={Math.round((props.value / timeToUse) * 100)} />
                 <Box
                     top={0}
                     left={0}
@@ -121,13 +134,23 @@ const Question: React.FC = () => {
                     </Grid>
                     <Grid item xs={12}>
                         {gameMode === 'timed' ? 'Timed Mode' : 'Unlimited Mode'}
+                        <Button onClick={() => setState((prevState) => ({ ...prevState, gameMode: gameMode === 'unlimited' ? 'timed' : 'unlimited' }))} variant='outlined' color='primary' size='small' sx={{ ml: 1 }}>Toggle</Button>
                         <br />
                         {sameOrDifferent === 'same' ? 'Same Questions' : 'Different Questions'}
+                        <Button onClick={() => setState((prevState) => ({ ...prevState, sameOrDifferent: sameOrDifferent === 'same' ? 'different' : 'same' }))} variant='outlined' color='primary' size='small' sx={{ ml: 1 }}>Toggle</Button>
                     </Grid>
                 </Grid>
                 {gameMode === 'timed' && (
-                    <Grid item>
-                        <CircularProgressWithLabel value={timeRemaining * 10} />
+                    <Grid item
+                        onClick={() => {
+                            let newTime = prompt('Each round will last for this many seconds. Default is 30 seconds.', timeToUse);
+                            if (newTime) {
+                                setTimeRemaining(parseInt(newTime));
+                                timeToUse = parseInt(newTime);
+                            }
+                        }}
+                        sx={{ cursor: 'pointer' }}>
+                        <CircularProgressWithLabel value={timeRemaining} />
                     </Grid>
                 )}
             </ModeIndicatorWrapper>

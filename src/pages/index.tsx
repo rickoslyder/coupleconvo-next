@@ -68,31 +68,43 @@ const Index: React.FC = () => {
   const [player2, setPlayer2] = useState(loadFromLocalStorage("player2_name") || "");
   const [sameQuestion, setSameQuestion] = useState(false);
 
-  const [gameMode, setGameMode] = useState<"infinite" | "timed" | "unlimited" | "preset">("unlimited");
-  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
+  const [gameMode, setGameMode] = useState<"timed" | "unlimited">("unlimited");
+  const [howMany, setHowMany] = useState<"infinite" | "preset">("infinite");
+  const [presetNumberOfQuestions, setPresetNumberOfQuestions] = useState<number>(10);
   const [sameOrDifferent, setSameOrDifferentState] = useState<"same" | "different">("same");
+  const [timePerRound, setTimePerRound] = useState<number>(30);
   const [showSummary, setShowSummary] = useState(false);
 
   const handleCategoryClick = (category: Category) => {
     saveToLocalStorage("player1_name", player1);
     saveToLocalStorage("player2_name", player2);
-    startGame(category, gameMode);
+    startGame(category, gameMode, howMany, presetNumberOfQuestions, timePerRound);
     setState((prevState) => ({ ...prevState, gameOver: false, sameQuestion: sameOrDifferent === "same" }));
     setShowSummary(false);
     router.push({
       pathname: '/question',
-      query: { player1, player2, sameQuestion: sameOrDifferent === "same" },
+      query: { player1, player2, sameQuestion: sameOrDifferent === "same", timed: timePerRound },
     });
   };
 
-  const handleGameModeChange = (event: SelectChangeEvent<"unlimited" | "timed" | "preset" | "infinite">) => {
-    setGameMode(event.target.value as "unlimited" | "timed" | "preset" | "infinite");
+  const handleGameModeChange = (event: SelectChangeEvent<"unlimited" | "timed">) => {
+    setGameMode(event.target.value as "unlimited" | "timed");
   };
 
-  const handleNumberOfQuestionsChange = (
+  const handleHowManyChange = (event: SelectChangeEvent<"infinite" | "preset">) => {
+    setHowMany(event.target.value as "infinite" | "preset");
+  };
+
+  const handlePresetNumberOfQuestionsChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNumberOfQuestions(parseInt(event.target.value, 10));
+    setPresetNumberOfQuestions(parseInt(event.target.value, 10));
+  };
+
+  const handleTimePerRoundChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTimePerRound(parseInt(event.target.value, 10));
   };
 
   const handleSameOrDifferentChange = (
@@ -164,34 +176,19 @@ const Index: React.FC = () => {
           label="Game Mode"
           onChange={handleGameModeChange}
         >
-          <MenuItem value="unlimited">Unlimited</MenuItem>
-          <MenuItem value="timed">Timed</MenuItem>
-          <MenuItem value="preset">Preset Number of Questions</MenuItem>
-          <MenuItem value="infinite">Infinite</MenuItem>
+          <MenuItem value="unlimited">Unlimited Mode</MenuItem>
+          <MenuItem value="timed">Timed Mode</MenuItem>
         </Select>
       </FormControl>
 
-      <br />
-
-      <FormControl fullWidth sx={{ mt: 2 }}>
-        <InputLabel>Questions</InputLabel>
-        <Select
-          value={sameOrDifferent}
-          onChange={handleSameOrDifferentChange}
-        >
-          <MenuItem value="same">Same</MenuItem>
-          <MenuItem value="different">Different</MenuItem>
-        </Select>
-      </FormControl>
-
-
-      {gameMode === "preset" && (
+      {gameMode === "timed" && (
         <TextField
           fullWidth
+          sx={{ mt: 2 }}
           type="number"
-          label="Number of Questions"
-          value={numberOfQuestions}
-          onChange={handleNumberOfQuestionsChange}
+          label="Time per Round (seconds)"
+          value={timePerRound}
+          onChange={handleTimePerRoundChange}
           InputProps={{
             inputProps: {
               min: 1,
@@ -199,6 +196,51 @@ const Index: React.FC = () => {
           }}
         />
       )}
+
+      <br />
+
+      <FormControl fullWidth sx={{ mt: 2 }}>
+        <InputLabel id="game-mode-label">How many questions?</InputLabel>
+        <Select
+          labelId="game-mode-label"
+          id="game-mode-select"
+          value={howMany}
+          label="How many questions?"
+          onChange={handleHowManyChange}
+        >
+          <MenuItem value="infinite">Infinite</MenuItem>
+          <MenuItem value="preset">Let me choose</MenuItem>
+        </Select>
+      </FormControl>
+
+      <br />
+
+      {howMany === "preset" && (
+        <TextField
+          fullWidth
+          sx={{ mt: 2 }}
+          type="number"
+          label="Number of Questions"
+          value={presetNumberOfQuestions}
+          onChange={handlePresetNumberOfQuestionsChange}
+          InputProps={{
+            inputProps: {
+              min: 1,
+            },
+          }}
+        />
+      )}
+
+      <FormControl fullWidth sx={{ mt: 2 }}>
+        <InputLabel>Players will answer</InputLabel>
+        <Select
+          value={sameOrDifferent}
+          onChange={handleSameOrDifferentChange}
+        >
+          <MenuItem value="same">Same Question</MenuItem>
+          <MenuItem value="different">Different Questions</MenuItem>
+        </Select>
+      </FormControl>
 
       {showSummary && (
         <div>
